@@ -13,108 +13,130 @@
         color: #abcdef
     }
 
+    #koi {
+        position: relative;
+        float: left;
+    }
+
+    #koi #monitor {
+        float: left;
+        margin: 20px;
+    }
+
+    #monitor .small-input {
+        width: 40px;
+    }
+
+    #monitor .editor {
+        padding: 5px;
+        border: solid 2px #444;
+    }
+
+    #monitor .properties {
+        padding: 5px;
+        border: solid 2px #444;
+    }
+
+    #koi #main {
+        float: left;
+    }
+
+    .debug {
+        float: left;
+        font-size: 10px;
+    }
 </style>
-<div ng-app>
+<div ng-app="koi">
 
-    <div id="editor" ng-controller="EditorCtrl">
+    <div id="koi" ng-controller="EditorCtrl">
+        <h2>Process:<input ng-model="name"></h2>
 
-        <p><span>Selected:{{currentSelect.x}},{{currentSelect.y}}</span>
-            <select ng-model='clickMode'>
-                <option value="add">Add</option>
-                <option value="get">get</option>
-            </select>
-            <button ng-click="reset()">Reset</button>
-            <button ng-click="deleteSelect()">Del</button>
-
-            <span class='msg'>{{msg}}</span>
-        </p>
-        <div id="">
+        <div id="main">
+            <p>
+                <button ng-click="save()">save</button>
+                <button ng-click="reset()">Reset</button>
+                <button ng-click="test()">Test</button>
+                <span class='msg'>{{msg}}</span>
+            </p>
             <div>
-                <select ng-model="currentSelect.type" ng-change="changeType()">
-                    <option value="act">Activity</option>
-                    <option value="sync">Synchronizer</option>
-                </select>
-
-                <p> x: <input ng-model="currentSelect.x"></p>
-
-                <p> y: <input ng-model="currentSelect.y"></p>
-
-                <p> name: <input ng-model="currentSelect.name"></p>
-
-                <p> url: <input ng-model="currentSelect.act_url"></p>
-
-                <p> method: <input ng-model="currentSelect.act_method"></p>
-
-                <p> params: <input ng-model="currentSelect.act_params"></p>
+                <canvas id="editor_canvas" class="editor"
+                        ng-click="handleClick($event)"
+                        ng-dblclick="handleDbClick($event)"
+                        my-right-click="handleRightClick($event)"
+                        ng-mousedown="handleDragging($event)">
+                    <!-- -->
+                </canvas>
             </div>
         </div>
-        <div>
-            <canvas id="editor_canvas" class="editor"
-                    ng-click="handleClick($event)"
-                    ng-mousedown="handleDragging($event)">
-                <!-- -->
-            </canvas>
+        <div id="monitor">
+            <div class="editor">
+                <div>
+                    <h4>Element @{{currentSelect.id}}</h4>
+
+                    <p>
+                        type:<select ng-model="currentSelect.type" ng-change="changeType()">
+                        <option value="a">Activity</option>
+                        <option value="s">Synchronizer</option>
+                    </select>
+                    </p>
+
+                    <p> x: <input ng-model="currentSelect.x"></p>
+
+                    <p> y: <input ng-model="currentSelect.y"></p>
+
+                    <div id="editor_a">
+                        <p> name: <input ng-model="currentSelect.name"></p>
+
+                        <p> url: <textarea ng-model="currentSelect.act_url"></textarea></p>
+
+                        <p> method: <input ng-model="currentSelect.act_method"></p>
+
+
+                        <p> params:</p>
+                        <form><input class="small-input" ng-model="param.key">:<input class="small-input"
+                                                                                     ng-model="param.val">
+                            <input type="submit" ng-click="param()" value="+"></form>
+                        </p>
+                        <p ng-repeat="(k,v) in currentSelect.act_params">{{k}}:{{v}}</p>
+                    </div>
+
+                    <div id="editor_s">
+                        syn_strategy:
+                        <select ng-model="currentSelect.syn_strategy">
+                            <option value="all">all</option>
+                            <option value="any">any</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="properties">
+                <h4>Properties</h4>
+
+                <p>
+
+                <form><input class="small-input" ng-model="prop.key">:<input class="small-input" ng-model="prop.val">
+                    <input type="submit" ng-click="prop()" value="+"></form>
+                </p>
+                <p ng-repeat="(k,v) in editor.props">{{k}}:{{v}}</p>
+            </div>
         </div>
+        <div class="debug">
+            <p>Points</p>
 
-        <p>{{points}}</p>
+            <p ng-repeat="(k,v) in editor.points">{{k}}:{{v}}</p>
 
-        <p>{{trans}}</p>
+            <p>Trans</p>
 
-        <table>
-            <tr ng-repeat="row in graph">
-                <td ng-repeat="item in row">{{item}}</td>
-            </tr>
-        </table>
+            <p ng-repeat="(k,v) in editor.trans">{{k}}:{{v}}</p>
+        </div>
     </div>
 </div>
 
 <script src="/js/jquery.min.js"></script>
+<script src="/js/jquery.json.js"></script>
+<script src="/js/koi_editor.js"></script>
 <script src="/js/angular.js"></script>
 <script>
-
-    // Points set, option, option, option
-    function Point(x, y, option) {
-        option = option || {};
-        this.x = x;
-        this.y = y;
-        this.radius = option.radius || 15;
-        this.fillStyle = option.fillStyle || "#eee";
-        this.strokeStyle = option.strokeStyle || "#444";
-    }
-
-
-    Point.prototype.toSynchronizer = function (strategy) {
-        this.syn_strategy = strategy || "any";
-    };
-
-    Point.prototype.toActivity = function (method, url, params) {
-        this.act_url = url || this.act_url;
-        this.act_method = method || this.act_method;
-        this.params = $.extend(this.params, params);
-    };
-
-    Point.prototype.toString = function () {
-        return "Point(" + this.x + "," + this.y + ")";
-    };
-
-    Point.prototype.fill = function () {
-        this.fillStyle = arguments[0];
-    };
-
-    Point.prototype.stroke = function () {
-        this.strokeStyle = arguments[0];
-    };
-
-    Point.prototype.moveTo = function () {
-        if (arguments.length === 1 && typeof arguments[0] === 'object') {
-            this.x = arguments[0].x;
-            this.y = arguments[0].y;
-        }
-        else if (arguments.length === 2) {
-            this.x = arguments[0];
-            this.y = arguments[1];
-        }
-    };
 
     $(function () {
 
@@ -126,238 +148,32 @@
 
     });
 
-    function ProcessInstance() {
-        /*graph for the process-flow*/
-        this.graph = [];
-        /*synchronizers & activities*/
-        this.elements = [];
+    var app = angular.module("koi", []);
 
-        function Synchronizer() {
-            this.type = 'sync';
-        }
-
-        function Activity() {
-            this.type = 'act';
-            /* real work function */
-            this.work = function () {
-                console.log('do some work');
-            }
-        }
-
-    }
-
-    function ProcessFlowEditor(element) {
-        var radius = 15; //px
-
-        var canvas = element;
-        var ctx = element.get(0).getContext('2d');
-        var offset = canvas.offset();
-        var offset_x = offset.left;
-        var offset_y = offset.top;
-
-        function resetOffset() {
-            offset = canvas.offset();
-            offset_x = offset.left;
-            offset_y = offset.top;
-        }
-
-        var points = [];
-        //elements array
-        //transitions
-        var trans = [];
-
-        this.graph = trans;
-
-        this.canvas = canvas;
-        this.points = points;
-        this.ctx = ctx;
-
-        this.findPoint = findPoint;
-
-        function findPoint(p_in, _radius) {
-            _radius = _radius || radius;
-            console.log("_radius", _radius);
-            var a = p_in.x;
-            var b = p_in.y;
-            //try to not to judge by the color
-            for (var i in points) {
-                var p = points[i];
-                if (p.type == 'act') {
-                    if (a < (p.x + 40) && a > (p.x - 40)
-                            && b < (p.y + 35) && b > (p.y - 35)) {
-                        return p;
-                    }
-                }
-                else {
-                    var x = p.x;
-                    var y = p.y;
-                    if (((x - a) * (x - a) + (y - b) * (y - b)) <= _radius * _radius) {
-                        return p;
-                    }
-                }
-            }
-            return undefined;
-        }
-
-
-        this.collidingDetect = collidingDetect;
-        function collidingDetect(p) {
-            var fp;
-            if (fp = findPoint(p, radius * 2)) return fp;
-            return false;
-        }
-
-
-        this.mousePoint = mousePoint;
-        function mousePoint(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            var start_x = parseInt(event.pageX - offset_x);
-            var start_y = parseInt(event.pageY - offset_y);
-            var p = new Point(start_x, start_y);
-            return p;
-        }
-
-
-        /**
-         * Render the elements and the relations
-         * on the certain context using the adjective matrix
-         * the indices is allocated as them are in the elements array.
-         * @param ctx
-         * @param elements
-         */
-        this.render = renderGraph;
-        function renderGraph() {
-            resetOffset();
-            $.each(points, function (i, elem) {
-                if (elem.type == 'act') {
-                    drawPointAsRect(ctx, elem);
-                } else {
-                    drawPointAsArc(ctx, elem, radius);
-                }
-            });
-            $.each(trans, function (i, elem) {
-                drawLine(points[elem.from], points[elem.to], elem.condition);
-            });
-        }
-
-        this.drawPointAsArc = drawPointAsArc;
-
-
-        function drawPointAsArc(ctx, p, radius) {
-            //TODO
-            ctx.strokeStyle = p.strokeStyle;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, radius, Math.PI * 2, false);
-            ctx.closePath();
-            ctx.stroke();
-        }
-
-        function drawPointAsRect(ctx, p, radius) {
-            ctx.strokeStyle = p.strokeStyle;
-            ctx.strokeRect(p.x - 40, p.y - 35, 80, 70);
-            //name
-            ctx.font = "20px Verdana";
-            ctx.fillText(p.name, p.x - 30, p.y - 10);
-        }
-
-        /**
-         *
-         * @param ctx
-         * @param canvas -- the canvas element
-         */
-        this.clear = clear;
-        function clear(sureToCleanData) {
-            if (sureToCleanData) {
-                points = [];
-            }
-            ctx.clearRect(0, 0, canvas.width(), canvas.height());
-            return this;
-        }
-
-        function drawLine(p1, p2) {
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-
-            ctx.closePath();
-            ctx.stroke();
-        };
-
-        function drawArrow(p1, p2, length){
-
-        }
-
-        /**
-         * Builds an n*n graph matrix
-         */
-        function initGraph() {
-            for (var i = 0; i < points.length; i++) {
-                trans.push(initRow(points.length));
-            }
-        }
-
-        function initRow(len) {
-            var row = [];
-            for (var i = 0; i < len; i++) {
-                row.push(0);
-            }
-            return row;
-        }
-
-        this.addPoint = addPoint;
-        function addPoint(p) {
-            points.push(p);
-        }
-
-        this.toggleTran = function toggleTran(p1, p2, condition) {
-            var p1_idx = $.inArray(p1, points);
-            var p2_idx = $.inArray(p2, points);
-            if (p1_idx !== -1 && p2_idx !== -1) {
-                var idx  = -1 ;
-                var t;
-                for (var i = 0; i < trans.length; i++) {
-                    t = trans[i];
-                    if(t.from == p1_idx && t.to == p2_idx) {
-                        idx = i;
-                        break;
-                    }
-                }
-                if(idx === -1) {
-                    trans.push({
-                        from: p1_idx,
-                        to: p2_idx,
-                        condition: condition
+    app.directive('myRightClick', function ($parse) {
+        return {
+            scope: false,
+            restrict: 'A',
+            link: function (scope, element, attrs) {
+                var fn = $parse(attrs.myRightClick);
+                element.bind('contextmenu', function (event) {
+                    scope.$apply(function () {
+                        event.preventDefault();
+                        fn(scope, {$event: event});
                     });
-                }
-                else {
-                    trans.splice(idx, 1);
-                }
+                });
             }
-        };
-
-
-        /**
-         * Deletes the point and the related associations.
-         */
-        this.deletePoint =
-                function deletePoint(p) {
-                    //
-                    var del_idx = $.inArray(p, points);
-                    if (del_idx !== -1)
-                        points.splice(del_idx, 1);
-                }
-
-    }
+        }
+    });
 
     function EditorCtrl($scope) {
         var $editor = $('#editor_canvas');
         var editor = $scope.editor = new ProcessFlowEditor($editor);
 
         function onSingleSelect(p) {
-            $.each($scope.points, function (i, p) {
-                p.fillStyle = '#444';
-                p.strokeStyle = '#444';
+            $.each($scope.editor.points, function (i, elem) {
+                elem.fillStyle = '#444';
+                elem.strokeStyle = '#444';
             });
 
             p.strokeStyle = 'red';
@@ -369,23 +185,14 @@
             p.fillStyle = 'red';
         }
 
-        $scope.cur = {
-            type: 'act',
-            name: '',
-            act_url: '',
-            act_method: 'get',
-            act_params: {}
-        };
-        $scope.graph = $scope.editor.graph;
-        $scope.points = $scope.editor.points;
-        $scope.currentSelect = null;
-        $scope.secondSelected = null;
-        $scope.clickMode = 'add';
+        $scope.currentSelect;
+
+        $scope.prop = {};
+        $scope.param = {};
         $scope.msg = 'all ok...';
 
         $scope.selectPoint = function (e) {
             var p = editor.mousePoint(e);
-            $scope.currentSelect = p;
             var ret;
             if (ret = $scope.editor.findPoint(p)) {
                 $scope.currentSelect = ret;
@@ -396,6 +203,7 @@
             } else {
                 $scope.msg = 'Nothing found';
             }
+            return ret;
         };
 
         $scope.createPoint = function (e) {
@@ -412,11 +220,15 @@
         };
 
         $scope.changeType = function () {
-            if ('syn' == $scope.currentSelect.type) {
-                $scope.currentSelect.toActivity();
+            console.log($scope.currentSelect);
+            if($scope.currentSelect === undefined) {
+                return;
             }
-            if ('act' == $scope.currentSelect.type) {
+            if ('s' == $scope.currentSelect.type) {
                 $scope.currentSelect.toSynchronizer();
+            }
+            if ('a' == $scope.currentSelect.type) {
+                $scope.currentSelect.toActivity();
             }
             $scope.editor.clear().render();
         };
@@ -426,48 +238,51 @@
             return false;
         };
 
+        /**choose **/
         $scope.handleClick = function (e) {
-            var clickMode = $scope.clickMode;
-            if ('add' == clickMode) {
-                $scope.createPoint(e);
-            } else if ('get' == clickMode) {
-                var old = $scope.currentSelect;
-                $scope.selectPoint(e);
-                if (e.shiftKey) {
-                    if ($scope.currentSelect !== old) {
-                        $scope.editor.toggleTran(old, $scope.currentSelect, prompt("condition", "true"));
-                    }
+            var old = $scope.currentSelect;
+            $scope.currentSelect = $scope.selectPoint(e);
+            if (e.shiftKey) {
+                if ($scope.currentSelect !== old && $scope.currentSelect !== undefined) {
+                    $scope.editor.addTran(old, $scope.currentSelect, prompt("condition", "true"));
                 }
             }
             $scope.editor.clear().render();
             return false;
         };
 
-        function onDragStart(e) {
-            if ($scope.clickMode == 'get') {
-                var p = $scope.editor.findPoint(editor.mousePoint(e));
-                if (p === undefined) {
-                    $scope.error("point not found .Drag failed.");
-                    return;
-                }
-                e.data = p;
-                $editor.bind("mouseup", e.data, onDragEnd);
-                $editor.bind("mousemove", e.data, onDragging);
-            }
-        }
-
-        function onLineDrawing() {
-            var p = event.data;
-            var cursor = editor.mousePoint(event);
-            onSingleSelect(p);
-            p.moveTo(cursor);
-            //draw
+        $scope.handleDbClick = function (e) {
+            $scope.createPoint(e);
             $scope.editor.clear().render();
-        }
+        };
 
-        function onDrawLineEnd() {
-            $editor.unbind("mousemove", onLineDrawing);
-            $editor.unbind("mouseup", onDragEnd);
+        $scope.handleRightClick = function (e) {
+            var old = $scope.currentSelect;
+            var cursor = editor.mousePoint(e);
+            var p;
+            if (p = editor.findPoint(cursor)) {
+                $scope.error("found:" + p);
+                $scope.currentSelect = p;
+            }
+            if (e.shiftKey && $scope.currentSelect !== old) {
+                $scope.editor.deleteTran(old, $scope.currentSelect);
+            } else {
+                editor.deletePoint(p);
+                $scope.error("found:" + p + "deleted");
+            }
+            $scope.editor.clear().render();
+            return false;
+        };
+
+        function onDragStart(e) {
+            var p = $scope.editor.findPoint(editor.mousePoint(e));
+            if (p === undefined) {
+                $scope.error("point not found .Drag failed.");
+                return;
+            }
+            e.data = p;
+            $editor.bind("mouseup", e.data, onDragEnd);
+            $editor.bind("mousemove", e.data, onDragging);
         }
 
         function onDragEnd() {
@@ -496,9 +311,18 @@
             $scope.editor.clear().render();
         };
 
+        $scope.prop = function () {
+            $scope.editor.prop($scope.prop.key, $scope.prop.val);
+        }
+
+        $scope.param = function () {
+            $scope.currentSelect.act_params[$scope.param.key] = $scope.param.val;
+        }
+
         setInterval(function () {
+            //do the refresh
             $scope.editor.clear().render();
-        }, 1000);
+        }, 200);
 
     }
 

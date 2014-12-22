@@ -56,6 +56,10 @@ public class Transition extends Model {
         return this;
     }
 
+    public String condition() {
+        return get("condition");
+    }
+
     public Transition name(String name) {
         set("name", name);
         return this;
@@ -128,6 +132,19 @@ public class Transition extends Model {
                 _getDB().get(t -> t.query(sql, processInstanceId, this.id()));
         return Boolean.valueOf((String)_for(list).first().get("result"));
     }
-
+/**
+     *
+     * @param processInstanceId
+     * @param value
+     * @return this property
+     */
+    public Transition runtimeResult(String processInstanceId, Boolean value) {
+        S._assert(processInstanceId);
+        String sql = "update r_process_instance_transition" +
+                "set result = ? " +
+                "where process_instance = ? and property = ? ";
+        _getDB().post(t -> t.exec(sql, value, processInstanceId, this.id()));
+        return this;
+    }
 
 }

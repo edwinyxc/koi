@@ -146,13 +146,18 @@ public class ProcessInstance extends Model {
             List<Transition> out = element.out();
             List<Element> validElements = new ArrayList<>();
             _for(out).each(t -> {
+                Map ctx = this.variables();
+                String condition = t.condition();
+                //TODO 1.do the EL calculation with properties 2. save the result 3. continue.
+                Boolean result = true;
+                t.runtimeResult(this.id(),true);
                 if (t.runtimeResult(this.id())) {
                     validElements.add(t.to());
                 }
+
             });
             _for(validElements).each(this::run);
         } else if (element.isActivity()) {
-            //TODO SEND HTTP REQUEST
             Tuple.T3<String, String, Map> activity = element.asActivity();
             String method = activity._a;
             String url = activity._b;
@@ -185,6 +190,9 @@ public class ProcessInstance extends Model {
                         //if response has
                     });
                     break;
+                //TODO
+//                case Element.ACT_METHOD_POST
+
             }
 
         }

@@ -42,6 +42,7 @@ public class KOI {
     }
 
     public static Controller controller = new Controller() {
+
         /*process*/
         @Mapping(value = "/processes/${_id}", methods = {HttpMethod.GET})
         public void getProcess(Request req, Response resp) {
@@ -51,22 +52,22 @@ public class KOI {
         @Mapping(value = "/processes", methods = {HttpMethod.POST})
         public void createProcess(Request req, Response resp) {
             String name = _notNullElse(req.param("name"), "process");
-            String points_json = _notNullElse(req.param("points"), "{}");
+            String points_json = _notNullElse(req.param("elements"), "{}");
             List<Map> points = Pond.json().fromString(List.class, points_json);
 
-            String edges_json= _notNullElse(req.param("edges"), "{}");
+            String edges_json= _notNullElse(req.param("transitions"), "{}");
             List<Map> edges = Pond.json().fromString(List.class, edges_json);
 
-            String params_json = _notNullElse(req.param("params"),"{}");
+            String params_json = _notNullElse(req.param("properties"),"{}");
             List<Map> params = Pond.json().fromString(List.class, params_json);
 
             List<Element> elements = _for(points).map(Element::parse).toList();
             List<Transition> transitions = _for(edges).map(map -> {
-                Integer in = (Integer) map.get("in");
-                Integer out = (Integer) map.get("out");
+                Integer from = (Integer) map.get("from");
+                Integer to = (Integer) map.get("to");
                 String condition = (String) map.get("condition");
                 return Record.newEntity(Transition.class)
-                        .init(elements.get(in).id(), elements.get(out).id())
+                        .init(elements.get(from).id(), elements.get(to).id())
                         .condition(condition);
             }).toList();
             List<Property> properties = _for(params).map( map ->
@@ -182,4 +183,6 @@ public class KOI {
         }
 
     };
+
+   public static Controller util = new UtilController();
 }

@@ -10,7 +10,8 @@ public class KOITest {
     public static void app() {
         Pond.init(app ->{
             app._static("www");
-            app.use("/koi",KOI.controller);
+            app.use("/koi", KOI.controller);
+            app.use("/util",KOI.util);
         }).listen(8081);
     }
 
