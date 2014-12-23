@@ -1,67 +1,143 @@
 #KOI-Business process flow
-
 ----
 
-系统功能简述
-==
-----
+设计背景
+========
+- 商业系统开发存在大量重复劳动。---各行业基础数据格式大同小异，但地区、行业、文化差异导致了实际业务流程的千变万化。
+- 实际开发过程中，软件供应商花费大量人力物力来学习客户的商业细节导致项目成功率不高，开发周期长，成本巨大，很多流程在开发过程中不断改造而欠下很多
+“技术债”而导致项目后期几乎无法维护。
+- 过去的“bpm"系统设计僵化，主要针对特定的功能进行设计，无法适应变化着的外部商业环境提出的各种需求，国内大量OA厂商任然以“审批”为唯一功能来作为
+设计目标。
+- 老式的流程引擎的关注点在于单个系统内部组合,对于复杂的业务--其往往要跨多个系统--无能为力。
+（举个例子，从SAP中导出成本中心数据导入到财务系统中往往需要一个岗位，甚至是一个部门的人力来完成）
+- 开发人员过多的参与业务细节，导致（商业）软件企业承担了过多责任。
+- 现代公司的业务跨度巨大，信息孤岛，管理孤岛的存在导致了领导层一般都迫切的希望有个统一的体系来整合数据。而开发这样一个“统一”的系统几乎是不可能完成
+的任务。所以解决方案应该是可以最大化利用现有的系统和功能，跨不同部门不同领域来完成一个高层次的“协同”。
+
+系统设计&解决方案
+=========
+- 基于有向图的工作执行流程管理，用户可以创建，使用，改造工作流程。
+- 记录流程中发生的数据变更以便统计流程执行效果，用于以后可能的流程（业务）升级和改造。
+- 区别于传统的“工作流”系统，koi不提供实际的业务功能,
+  例如
+   __用户管理__，
+  __角色管理__，
+  __审批功能__，
+  __角色__
+  之类。
+  业务数据始终维护在业务系统而不是在工作流中。
+  表单之类的业务数据对于koi来说也是透明的。koi本身不提供表单设计器（可能以后会以插件形式提供）。
+  系统不提供直接可用的业务功能，取而代之一套基本的流程原语，如获取、修改、添加、删除等（具体内容见“流程原语”章节），组合这些便可做出一个可用的业务功能，我们称之“widget(微件)”。
+- 使用关系数据库保存流程及流程实例的各个元素，方便之后对流程元数据的统计分析。
+- 方便的和现有工作系统进行集成，不需要对原有系统进行改造或者只需要提供数据访问写入接口。
+- 系统独立运行，业务系统可以选择基于其开发，也可以选择单独使用流程服务作为一个补充，或者直接使用流程服务快速地构建一套业务（on-the-fly)。
+
+系统组件
+=========
+- Server --基本服务器，提供所有流程和流程实例的无状态服务
+- Web Designer --基于html5的绘图工具，我们提供的默认客户端
+- Stand-alone Designer --独立运行的绘图工具（计划中）
+
 名词定义
-==
+=======
 ####User Agent
 > 用户代理，如浏览器  
 ####Client
 >客户端服务器，提供具体的业务实现。尽量使用RESTful风格搭建API。
+
 #### Server
 >Business Process Flow management server。包含一个完整的流程数据库、流程引擎和相关API。本文中如无特别指出，一般指KOI系统。
+
 #### Process
 >流程的定义，包含了相关的节点和逻辑。
+
 #### Process Instance
 >流程实例（流程运行时）
-#### Process Parameter
+
+#### Process Properties
 >流程变量（流程运行时的上下文）
+
 #### Activity
 >流程节点的一种，和Client进行交互的唯一实体
+
 #### Synchronizer
-> <!--TODO -->
+>另一种流程节点，被流程引擎所管理，任意两个Activity实例之间必须含有且只含有一个Synchronizer。(此设计的目的是为了以后设计成无环图)
+
 #### Completion
->KOI和client交互时主要的数据传输对象(详情见下)
+> KOI和client交互时主要的数据传输对象
 
----
+>  * process_instance_id
+>  * activity_id
+>  * complete - true/false 用于指明该activity完成状态。
+>  * properties - 流程变量的变更
 
-Completion
-===
+---------
+一般执行过程
+=========
 
----
-	
-运行流程
-==
+    +----------+                 +------+                     +------+
+    |User Agent|  1.user call    |Client| 1.create instance   |Server|
+    |          |---------------->|      |<------------------->|      |
+    |          |                 |      |                     |      |
+    |          |                 |      |                     |      |
+    |          |                 |      | 2.start instance    |      |
+    |          |                 |[pre ]|-------------------->|      |  (activities working)
+    |          |                 |      |                     |      |-----------------------+
+    |          |                 |      |                     |      | May not have to wait  |
+    |          |                 |      |                     |      | if there is no user   |
+    |          |                 |      |                     |      | inputs.               |
+    |          |                 |      |                     |      |                       |
+    |          |                 |      | 3.synchronizing     |      |                       |
+    |          |                 |      |<------------------->|      |<----------------------+
+    |          |                 |      | 4.work with client  |      |
+    |          |                 |      |<------------------->|      |
+    |          | 5.some job done |      | 5.complete activity |      |
+    |          |---------------->|      |<------------------->|      |
+    |          |                 |      |                     |      |
+    |          |                 |      |                     |      |
+    |          | 6.get "todo"    |      | 6.find current      |      |
+    |          |---------------->|      |-------------------->|      |
+    |          |                 |      |                     |      |
+    |          | 7.finish        |      | 7.abort/finish      |      |
+    |          |---------------->|      |<------------------->|      |
+    |          |                 |      |                     |      |
+    |          |                 |      |                     |      |
+    |          |                 |      |                     |      |
+    |          |                 |      |                     |      |
+    |          |                 |      |                     |      |
+    |          |                 |      |                     |      |
+    |          |                 |      |                     |      |
+    |          |                 |      |                     |      |
+    |          |                 |      |                     |      |
+
 
 1. user agent向client发送启动流程request
-    > 包含各种业务处理对象，如请假流程中的请假实体
+    > GET, POST : /server/create
+	  * process_id : 用户指定使用的流程id( 必须存在 )
+	  * addresser :  流程的创建者
 
-2. client接收并处理获取到的数据，并向KOI发送创建流程request（
-发送一个completion对象的序列化json）
+2. client接收并处理获取到的数据，在执行完内部的数据处理工作后，
+向KOI发送创建流程request（发送一个completion对象的序列化json）
+KOI接受client发来的数据，并解析、创建流程，最终返回process_instance给client（此时流程并没有启动）
+client接收到process_instance_id ，将该id发送给KOI以启动该流程实例
+    > GET, POST : /server/start
+      * process_instance_id : 已经创建的流程实例id(必须存在)
+3. 略(双向透明)
+4. 流程执行过程中通过定义好的activity和client进行交互（使用流程原语）
+	> [GET, POST, PUT, DELETE] ：/server/do/[some_method]?uri=[client_api]&cb=[callback]
+	 * some_method :这里就是预先定义好的流程原语，对于按照RESTful风格定义的client,get,post,put,delete应该已经足够。
+     * uri :client系统特定功能的api
+     * cb :另外一预先组定义好的流程原语，处理返回数据
 
-	>该步骤中，客户端发出的HTTP请求包含以下参数：
-	
+5. 用户结束某个activity
+    > GET, POST :/server/complete
+     * activity_id: 需要完成的activity
+     * process_instance_id: 相关的流程实例
+     * completion: 完成对象
 
-3. KOI接受client发来的数据，并解析、创建流程，最终返回process instance id 给client（此时流程并没有启动）
+6. 查询当前处于等待状态的activity
 
-4. client接收到process instance id ，将该id发送给KOI以启动该流程实例
-	
-	>该步骤中，客户端发出的HTTP请求包含以下参数：
-
-5. KOI启动流程并根据process param 判断出下一Activity，并向client发送request。
-	
-	该步骤中，客户端发出的HTTP请求包含以下参数：
-
-6. client根据Activity选择操作者，返回completion对象
-
-7. KOI根据completion判断继续流程还是暂停。如继续流程，则返回第四步，否则继续
-
-8. 用户通过user agent向clent发送继续流程request
-
-9. client通过 `/complete` 方法向KOI发送流程继续request
+7. 用户提前终止流程
 
 
 
