@@ -41,7 +41,8 @@
 名词定义
 =======
 ####User Agent
-> 用户代理，如浏览器  
+> 用户代理，如浏览器
+
 ####Client
 >客户端服务器，提供具体的业务实现。尽量使用RESTful风格搭建API。
 
@@ -112,28 +113,30 @@
 
 
 1. user agent向client发送启动流程request
-    > GET, POST : /server/create
-	  * process_id : 用户指定使用的流程id( 必须存在 )
-	  * addresser :  流程的创建者
+    GET, POST : /server/create
+      * process_id : 用户指定使用的流程id( 必须存在 )
+      * addresser :  流程的创建者
 
 2. client接收并处理获取到的数据，在执行完内部的数据处理工作后，
 向KOI发送创建流程request（发送一个completion对象的序列化json）
 KOI接受client发来的数据，并解析、创建流程，最终返回process_instance给client（此时流程并没有启动）
 client接收到process_instance_id ，将该id发送给KOI以启动该流程实例
-    > GET, POST : /server/start
+    GET, POST : /server/start
       * process_instance_id : 已经创建的流程实例id(必须存在)
+
 3. 略(双向透明)
+
 4. 流程执行过程中通过定义好的activity和client进行交互（使用流程原语）
-	> [GET, POST, PUT, DELETE] ：/server/do/[some_method]?uri=[client_api]&cb=[callback]
-	 * some_method :这里就是预先定义好的流程原语，对于按照RESTful风格定义的client,get,post,put,delete应该已经足够。
-     * uri :client系统特定功能的api
-     * cb :另外一预先组定义好的流程原语，处理返回数据
+    [GET, POST, PUT, DELETE] ：/server/do/[some_method]?uri=[client_api]&cb=[callback]
+	  * some_method :这里就是预先定义好的流程原语，对于按照RESTful风格定义的client,get,post,put,delete应该已经足够。
+      * uri :client系统特定功能的api
+      * cb :另外一预先组定义好的流程原语，处理返回数据
 
 5. 用户结束某个activity
-    > GET, POST :/server/complete
-     * activity_id: 需要完成的activity
-     * process_instance_id: 相关的流程实例
-     * completion: 完成对象
+    GET, POST :/server/complete
+      * activity_id: 需要完成的activity
+      * process_instance_id: 相关的流程实例
+      * completion: 完成对象
 
 6. 查询当前处于等待状态的activity
 
