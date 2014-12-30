@@ -1,3 +1,11 @@
+/**
+ * The Editor
+ *  - point
+ *  - element ( activity, synchronizer ）
+ *  - transition
+ *
+ *  - renderFunction
+ */
 function ProcessFlowEditor(element, options) {
 // Points set, option, option, option
     function Point(x, y, option) {
@@ -18,6 +26,7 @@ function ProcessFlowEditor(element, options) {
             ctx.closePath();
             ctx.stroke();
         }
+
         if ('a' == this.type) {
             ctx.strokeStyle = this.strokeStyle;
             ctx.strokeRect(this.x - 40, this.y - 35, 80, 70);
@@ -25,6 +34,7 @@ function ProcessFlowEditor(element, options) {
             ctx.font = "20px Verdana";
             ctx.fillText(this.name, this.x - 30, this.y - 10);
         }
+
         ctx.strokeStyle = "#444";
     };
 
@@ -56,7 +66,7 @@ function ProcessFlowEditor(element, options) {
         }
     };
 
-    function Tran(from, to, intermediates) {
+    function Transition (from, to, intermediates) {
 
         this.from = from;
         this.to = to;
@@ -66,20 +76,19 @@ function ProcessFlowEditor(element, options) {
 
     }
 
-
-    Tran.prototype.toString = function () {
+    Transition.prototype.toString = function () {
         var ret = "(" + from.x + "," + from.y + ")";
         $.each(this.intermediates, function (i, elem) {
             ret += "->(" + elem.x + "," + elem.y + ")"
         });
         return ret;
-    }
+    };
 
-    Tran.prototype.addMidPoint = function (x, y) {
+    Transition.prototype.addMidPoint = function (x, y) {
         this.intermediates.push({x: x, y: y});
-    }
+    };
 
-    Tran.prototype.render = function (ctx) {
+    Transition.prototype.render = function (ctx) {
         ctx.beginPath();
         ctx.moveTo(this.from.x, this.from.y);
         $.each(this.intermediates, function (i, elem) {
@@ -88,19 +97,18 @@ function ProcessFlowEditor(element, options) {
         ctx.lineTo(this.to.x, this.to.y);
         ctx.closePath();
         ctx.stroke();
-    }
+    };
 
     options = options || {
         url: "/koi"
-    }
+    };
 
     //process flow id
-    var id = null;
-
     var radius = 15; //px
     var t = this;
     var canvas = element;
     var ctx = element.get(0).getContext('2d');
+
     var offset = canvas.offset();
     var offset_x = offset.left;
     var offset_y = offset.top;
@@ -112,12 +120,11 @@ function ProcessFlowEditor(element, options) {
     }
 
     var points = [];
-
     //transitions
     var trans = [];
-
     var props = {};
 
+    this.id = 'n/a';
     this.name = "new Process";
     this.canvas = canvas;
     this.points = points;
@@ -299,7 +306,7 @@ function ProcessFlowEditor(element, options) {
     this.addTran = function (p1, p2, condition) {
         var p1_idx = $.inArray(p1, points);
         var p2_idx = $.inArray(p2, points);
-        var t = new Tran(p1, p2);
+        var t = new Transition(p1, p2);
         t.condition = condition;
         this.trans.push(t);
     }

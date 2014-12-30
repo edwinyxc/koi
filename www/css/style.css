@@ -1,0 +1,212 @@
+body{
+	font-family: Arial,"微软雅黑";
+	font-size: 13px;
+	margin: 0;
+	padding: 0;
+	background: #eee;
+}
+header{
+	background: #5cb85c;
+	display: block;
+	float: left;
+	width: 100%;
+	color: white;
+	padding: .3em 0 .3em 0;
+	position: fixed;
+	top: 0;
+}
+header .nav{
+	padding-left: 45px;
+	float: left;
+}
+header .nav ul{
+	margin: 0;
+	padding: 0;
+}
+header .nav ul li {
+	list-style: none;
+	float: left;
+	cursor: pointer;
+	padding: 0 10px 0 0;
+}
+.content{
+	margin-left: 42px;
+	float: left;
+	margin-top: 10px;
+}
+section .side{
+	position: fixed;
+	background: #5cb85c;
+	top: 50px;
+	cursor: pointer;
+	font-size: 15px;
+	color: white;
+	min-height: 380px;
+}
+section .side ul {
+	margin: 0;
+	padding: 0;
+}
+section .side ul li{
+	list-style: none;
+	padding: 10px 13px;
+	border-bottom: 1px solid white;
+}
+
+
+section .side-right{
+	background: #fff;
+	position: fixed;
+	right: 1%;
+	top: 10%;
+	border:1px solid #dff0d8;
+	width: 200px;
+	height: 60%;
+	overflow: scroll;
+}
+ .entry{
+	padding: 10px 0 10px 10px;
+	float: left;
+}
+ .entry .text1{
+	float: left;
+}
+ .entry .text1 input{
+	width: 50px;
+}
+ .entry .text2 input{
+	width: 50px;
+}
+ .entry .text2{
+	float: left;
+}
+ .add{
+	cursor: pointer;
+	float: left;
+	padding: 4px 15px 4px 15px;
+	font-size: 14px;
+	background: #5cb85c;
+	color: white;
+	margin-left: 10px;
+}
+section .side-right .table{
+	float: left;
+	width: 165px;
+	padding: 15px 0 0 10px;
+	cursor: pointer;
+}
+section .side-right .table .head{
+	border:1px solid #dff0d8;
+	display: block;
+	padding: 2px 0 2px 10px;
+	border-bottom: none;
+	width: 50px;
+}
+section .side-right .table .body{
+	border:1px solid #dff0d8;
+	float: left;
+}
+section .side-right .table .body .key{
+	border-right: 1px solid #dff0d8;
+	float: left;
+	width: auto;
+	min-width: 50px;
+	padding: 2px 0 2px 10px;
+}
+section .side-right .table .body .value{
+	float: left;
+	width: auto;
+	min-width: 97px;
+	padding: 2px 0 2px 5px;
+}
+footer .breviary{
+	background: #fff;
+	position: fixed;
+	left:1%;
+	bottom: 1%;
+	width: 16%;
+	height: 26%;
+	border:1px solid #dff0d8;
+	cursor: pointer;
+}
+footer .breviary img{
+	width: 95%;
+	height: 95%;
+}
+
+footer .right{
+	background: #fff;
+	position: fixed;
+	bottom:1%;
+	right: 1%;
+	height: 26%;
+	width: 80%;
+	border:1px solid #dff0d8;
+}
+footer .right .con{
+	float: left;
+}
+footer .right .con div{
+	padding: 10px 0 10px 10px;
+}
+footer .right .con div label{
+	display: inline-block;
+	width: auto;
+	min-width: 50px;
+	text-align: right;
+}
+footer .right .con div input{
+	width: 150px;
+}
+footer .right .c{
+	float: left;
+}
+footer .right .c div{
+	padding: 10px 0 10px 10px;
+}
+footer .right .c div label{
+	display: inline-block;
+	width: 85px;
+	text-align: right;
+}
+footer .right .c div select{
+	width: 150px;
+}
+
+footer .right .last {
+	float: left;
+	margin-left: 63px;
+}
+footer .right .last .text1{
+	float: left;
+}
+footer .right .last .text1 input{
+	width: 50px;
+	float: left;
+}
+footer .right .last .add{
+	cursor: pointer;
+	float: left;
+	padding: 4px 15px 4px 15px;
+	font-size: 14px;
+	background: #5cb85c;
+	color: white;
+	margin-left: 10px;
+	margin-top: 10px;
+}
+footer .right .url{
+	margin-top: 10px;
+	float: left;
+	margin-left: 15px;
+}
+footer .right .url div{
+
+}
+footer .right .url div label{
+	display: block;
+	padding-bottom: 5px;
+}
+footer .right .url div textarea{
+	width: 500px;
+	height: 150px;
+}

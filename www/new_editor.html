@@ -27,7 +27,7 @@
             <li><i class="icon-zoom-in" title="测试"></i></li>
         </ul>
     </div>
-    <canvas class="content">
+    <canvas id="content">
         content
     </canvas>
     <div class="side-right">
@@ -54,79 +54,11 @@
                 </div>
             </div>
         </div>
-        <div class="table">
-            <div class="head">head</div>
-            <div class="body">
-                <div class="key">
-                    key
-                </div>
-                <div class="value">
-                    value
-                </div>
-            </div>
-        </div>
-        <div class="table">
-            <div class="head">head</div>
-            <div class="body">
-                <div class="key">
-                    key
-                </div>
-                <div class="value">
-                    value
-                </div>
-            </div>
-        </div>
-        <div class="table">
-            <div class="head">head</div>
-            <div class="body">
-                <div class="key">
-                    key
-                </div>
-                <div class="value">
-                    value
-                </div>
-            </div>
-        </div>
-        <div class="table">
-            <div class="head">head</div>
-            <div class="body">
-                <div class="key">
-                    key
-                </div>
-                <div class="value">
-                    value
-                </div>
-            </div>
-        </div>
-        <div class="table">
-            <div class="head">head</div>
-            <div class="body">
-                <div class="key">
-                    key
-                </div>
-                <div class="value">
-                    value
-                </div>
-            </div>
-        </div>
-        <div class="table">
-            <div class="head">head</div>
-            <div class="body">
-                <div class="key">
-                    key
-                </div>
-                <div class="value">
-                    value
-                </div>
-            </div>
-        </div>
-
-
     </div>
 </section>
 <footer>
     <div class="breviary">
-        <img src="login.jpg">
+        <canvas id="aerial"></canvas>
     </div>
     <div class="right">
         <div class="con">
@@ -170,9 +102,14 @@
 <script src="/js/jquery.min.js"></script>
 <script>
     $(function(){
-        $('canvas').attr({
+        $('canvas#content').attr({
             width:window.innerWidth,
             height:window.innerHeight
+        });
+
+        $('canvas#aerial').attr({
+            width:$(this).parent().width(),
+            height:$(this).parent().height()
         });
     });
 </script>
