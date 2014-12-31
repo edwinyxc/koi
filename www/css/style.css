@@ -15,6 +15,14 @@ header{
 	position: fixed;
 	top: 0;
 }
+
+header a {
+	text-decoration: none;
+	color: #eee;
+}
+header a:hover {
+	color: #fff;
+}
 header .nav{
 	padding-left: 45px;
 	float: left;
@@ -37,9 +45,10 @@ header .nav ul li {
 section .side{
 	position: fixed;
 	background: #5cb85c;
-	top: 50px;
+	top: 70px;
+	left: 10px;
 	cursor: pointer;
-	font-size: 15px;
+	font-size: 2em;
 	color: white;
 	min-height: 380px;
 }
@@ -52,7 +61,13 @@ section .side ul li{
 	padding: 10px 13px;
 	border-bottom: 1px solid white;
 }
+section .side ul li a{
+	color:#eee;
+}
 
+section .side ul li a:hover{
+	color:#fff;
+}
 
 section .side-right{
 	background: #fff;
