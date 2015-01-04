@@ -1,6 +1,6 @@
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>KOI EDITOR</title>
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">
@@ -26,9 +26,13 @@
             <li><a><i class="fa fa-tasks" title="end node"></i></a></li>
         </ul>
     </div>
-    <canvas id="content">
-        content
-    </canvas>
+    <div id="designer_viewport">
+        <div id="canvas_container">
+            <canvas id="content">
+                content
+            </canvas>
+        </div>
+    </div>
     <div class="side-right">
         <div class="entry">
             <div class="text1">
@@ -102,16 +106,29 @@
 <script src="/js/angular.js"></script>
 <script src="/js/koi_editor.js"></script>
 <script>
-    $(function(){
-        $('canvas#content').attr({
-            width:window.innerWidth,
-            height:window.innerHeight
+    $(function () {
+        var canvas = $('canvas#content').attr({
+            width: 1000,
+            height: 1000
         });
 
-        $('canvas#aerial').attr({
-            width:$(this).parent().width(),
-            height:$(this).parent().height()
+        canvas.css({
+            padding: '1000px'
         });
+
+        var ctx = canvas.get(0).getContext('2d');
+        ctx.fillStyle = 'rgb(192, 80, 77)'; // 红
+        ctx.fillRect(0, 0, 1000, 1000);
+        ctx.strokeStyle = '#FFF';
+        ctx.strokeRect(1, 1, 998, 998);
+
+
+        $('canvas#aerial').attr({
+            width: $(this).parent().width(),
+            height: $(this).parent().height()
+        });
+
+        canvas.focus();
     });
 </script>
 </body>
