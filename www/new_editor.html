@@ -1,9 +1,8 @@
-<!doctype html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>KOI EDITOR</title>
-    <link rel="stylesheet" type="text/css" href="/css/designer.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">
 </head>
 <body>
@@ -19,37 +18,22 @@
     </div>
 </header>
 <section>
-    <div id="designer_viewport">
-        <div id="designer_layout">
-            <div id="canvas_container">
-                <canvas id="designer_canvas">
-                    content
-                </canvas>
-            </div>
-        </div>
-    </div>
-    <div id="elements" class="dock left-top-abs elements">
-        <div class="dock-header">Elements</div>
-        <ul >
+    <div class="side">
+        <ul>
             <li><a><i class="fa fa-circle" title="start node"></i></a></li>
             <li><a><i class="fa fa-circle-o" title="synchronizer"></i></a></li>
             <li><a><i class="fa fa-dot-circle-o" title="end node"></i></a></li>
             <li><a><i class="fa fa-tasks" title="end node"></i></a></li>
         </ul>
     </div>
-
-    <div id="details" class="dock right-top-abs">
-        <div class="dock-header"></div>
-        <ul>
-            <li><a><i class="fa fa-gear"></i></a></li>
-            <li><a><i class="fa fa-list-alt"></i></a></li>
-        </ul>
-        <div id="right_popup" class="right-popup">
-
+    <div id="designer_viewport">
+        <div id="canvas_container">
+            <canvas id="content">
+                content
+            </canvas>
         </div>
     </div>
-    <!--
-    <div id="properties" class="elements-right" style="display: none">
+    <div class="side-right">
         <div class="entry">
             <div class="text1">
                 <input type="text">:
@@ -74,81 +58,8 @@
             </div>
         </div>
     </div>
-
-    <div id="activity" class="elements-right" style="display:none;">
-        <form>
-            <input type="hidden" name="type" value="a">
-
-            <p><label for="x">x</label><input id="x" class="short" name="x" type="text">
-                <label for="y">y</label><input id="y" class="short" type="text" name="y"></p>
-
-            <p><label for="name">name</label><input type="text" id="name" name="name"></p>
-
-            <div>
-                <p><label for="act_method">method</label>
-                    <select id="act_method" name="act_method">
-                        <option value="get">GET</option>
-                        <option value="post">POST</option>
-                        <option value="put">PUT</option>
-                        <option value="delete">DELETE</option>
-                    </select></p>
-            </div>
-            <div>
-                <p><label for="act_url">url</label></p>
-
-                <p><textarea rows="5" cols="20" id="act_url" name="act_url"></textarea></p>
-            </div>
-
-            <div>
-                <p><label>parameters</label></p>
-
-                <p class="kv_adder">
-                    <input class="short" placeholder="key">:
-                    <input class="short" placeholder="value"><a class="add"><i class="fa fa-plus"></i></a>
-                </p>
-            </div>
-        </form>
-    </div>
-
-    <div id="synchronizer" class="elements-right" style="">
-        <form>
-            <h4>Synchronizer</h4>
-            <input type="hidden" name="type" value="s">
-
-            <p><label for="x">x</label><input id="x" class="short" name="x" type="text">
-                <label for="y">y</label><input id="y" class="short" type="text" name="y"></p>
-
-            <p><label for="name">name</label><input type="text" id="name" name="name"></p>
-
-            <div>
-                <p><label for="act_method">method</label>
-                    <select id="act_method" name="act_method">
-                        <option value="get">GET</option>
-                        <option value="post">POST</option>
-                        <option value="put">PUT</option>
-                        <option value="delete">DELETE</option>
-                    </select></p>
-            </div>
-            <div>
-                <p><label for="act_url">url</label></p>
-
-                <p><textarea rows="5" cols="20" id="act_url" name="act_url"></textarea></p>
-            </div>
-
-            <div>
-                <p><label>parameters</label></p>
-
-                <p class="kv_adder">
-                    <input class="short" placeholder="key">:
-                    <input class="short" placeholder="value"><a class="add"><i class="fa fa-plus"></i></a>
-                </p>
-            </div>
-        </form>
-    </div>
-    -->
 </section>
 <footer>
-    <!--
     <div class="breviary">
         <canvas id="aerial"></canvas>
     </div>
@@ -190,15 +101,34 @@
             <div><label>url:</label><textarea></textarea></div>
         </div>
     </div>
-    -->
 </footer>
 <script src="/js/jquery.min.js"></script>
 <script src="/js/angular.js"></script>
 <script src="/js/koi_editor.js"></script>
-<script src="/js/editor.js"></script>
 <script>
     $(function () {
-        Designer.init();
+        var canvas = $('canvas#content').attr({
+            width: 1000,
+            height: 1000
+        });
+
+        canvas.css({
+            padding: '1000px'
+        });
+
+        var ctx = canvas.get(0).getContext('2d');
+        ctx.fillStyle = 'rgb(192, 80, 77)'; // 红
+        ctx.fillRect(0, 0, 1000, 1000);
+        ctx.strokeStyle = '#FFF';
+        ctx.strokeRect(1, 1, 998, 998);
+
+
+        $('canvas#aerial').attr({
+            width: $(this).parent().width(),
+            height: $(this).parent().height()
+        });
+
+        canvas.focus();
     });
 </script>
 </body>

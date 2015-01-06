@@ -1,4 +1,15 @@
 var S={};
+var _for = function(o){
+    if ((typeof o) === 'object'){
+
+    }
+    return {
+        each:function(){},
+        map:function(){},
+        grep:function(){}
+    }
+};
+
 S.setCookie = function (b, c, a) {
     var d = new Date();
     d.setDate(d.getDate() + a);

@@ -1,12 +1,12 @@
 <!doctype html>
-<html>
+<html ng-app="app" ng-controller="main">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>KOI EDITOR</title>
+    <title>{{g_title}}</title>
     <link rel="stylesheet" type="text/css" href="/css/designer.css">
     <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">
 </head>
-<body>
+<body ng-controller="main">
 <header>
     <div class="nav">
         <ul>
@@ -42,96 +42,22 @@
         <div class="dock-header"></div>
         <ul>
             <li><a><i class="fa fa-gear"></i></a></li>
-            <li><a><i class="fa fa-gear"></i></a></li>
-            <li><a><i class="fa fa-list-alt"></i></a></li>
         </ul>
-        <div id="right_popup" class="right-popup">
+        <div id="right_popup" class="right-top-abs popup">
 
         </div>
     </div>
-    <!--
-    <div id="properties" class="elements-right" style="display: none">
-        <div class="entry">
-            <div class="text1">
-                <input type="text">:
-            </div>
-            <div class="text2">
-                <input type="text">
-            </div>
-            <div class="add">
-                <i class="fa fa-plus"></i>
-            </div>
-        </div>
-
-        <div class="table">
-            <div class="head">head</div>
-            <div class="body">
-                <div class="key">
-                    key
-                </div>
-                <div class="value">
-                    value
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    -->
 </section>
 <footer>
-    <!--
-    <div class="breviary">
-        <canvas id="aerial"></canvas>
-    </div>
-    <div class="right">
-        <div class="con">
-            <div><label>x:</label><input type="text"></div>
-            <div><label>y:</label><input type="text"></div>
-            <div><label>method:</label><input type="text"></div>
-            <div><label>name:</label><input type="text"></div>
-        </div>
-        <div class="c">
-            <div>
-                <label>type:</label>
-                <select>type
-                    <option>asss</option>
-                    <option>asss</option>
-                </select>
-            </div>
-            <div>
-                <label>syn_straategy:</label>
-                <select>syn_straategy
-                    <option>syn_straategy</option>
-                    <option>syn_straategy</option>
-                </select>
-            </div>
-            <div class="last">
-                <div class="text1">
-                    <input type="text">:
-                </div>
-                <div class="text1">
-                    <input type="text">
-                </div>
-                <div class="add">
-                    <i class="fa fa-plus"></i>
-                </div>
-            </div>
-        </div>
-        <div class="url">
-            <div><label>url:</label><textarea></textarea></div>
-        </div>
-    </div>
-    -->
+    <p>Powered By shuimin co., ltd.</p>
 </footer>
-<script src="/js/jquery.min.js"></script>
-<script src="/js/angular.js"></script>
-<script src="/js/koi_editor.js"></script>
-<script src="/js/editor.js"></script>
-<script>
-    $(function () {
-        Designer.init();
-    });
-</script>
+<div id="popups">
+</div>
+<script src="/lib/jquery.min.js"></script>
+<script src="/lib/angular.js"></script>
+
+<script src="/app/designer.js"></script>
+<script src="/app/koi.js"></script>
+<script src="/app/main.js"></script>
 </body>
 </html>

@@ -77,7 +77,7 @@ var Designer = (function ($) {
                 $e.empty();
                 $(docks).each(function ( i,elem) {
                     var $li = $('<li/>').append($('<a/>').append($('<i/>').addClass(elem.icon))
-                            .attr('name', elem.name))
+                        .attr('name', elem.name))
                     $e.append($li);
                     Designer.Popup.register(elem.name,$li,elem.tmpl,$popup);
                 });
