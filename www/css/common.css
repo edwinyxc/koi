@@ -1,0 +1,27 @@
+html,body{
+    margin: 0;
+    padding: 0;
+}
+body{
+    font-family: "Microsoft Yahei","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 13px;
+    background: #eee;
+    color:#333;
+}
+ul,li{
+    cursor:default;
+    text-decoration: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+header{
+    position: relative;
+    display: block;
+    height: 35px;
+    z-index: 1;
+}
+section{
+    position: relative;
+    width: 100%;
+}
