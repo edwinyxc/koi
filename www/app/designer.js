@@ -16,49 +16,79 @@ var Designer = (function ($) {
             selectorColor: "#833",
             scale: 1
         },
+        $layout:null,
+        $container:null,
+        $scope: null,
+        $canvas: null,
+        Mouse: {
+            clientX: 0,
+            clientY: 0,
+            pageX: 0,
+            pageY: 0,
+            canvasX: 0, // relative to canvas
+            canvasY: 0,
+            updateMouse: function (e) {
+                Designer.Mouse.clientX = e.clientX;
+                Designer.Mouse.clientY = e.clientY;
+                Designer.Mouse.pageX = e.pageX;
+                Designer.Mouse.pageY = e.pageY;
+                var canvas_offset = Designer.$canvas.offset();
+                var canvas_x = canvas_offset.left - parseInt($(window).scrollLeft());
+                var canvas_y = canvas_offset.top - parseInt($(window).scrollTop());
+                Designer.Mouse.canvasX = Designer.Mouse.clientX - canvas_x;
+                Designer.Mouse.canvasY = Designer.Mouse.clientY - canvas_y;
+                Designer.$scope.$digest();
+            }
+        },
         Popup: {
-            $popups:$('#popups'),
-            register:function(name,$trigger,tmplUrl,$target){
-                var $p = Designer.Popup.$popups.find('div.popup_container[name='+name+']');
-                console.log($p);
-                if($p.length == 0) {
-                    $p = $('<div/>').css({display:'none'});
-                    $p.load(tmplUrl, function(){
-                        $(this).attr('_popup','false')
-                            .attr('name',name).addClass('popup_container');
-                        Designer.Popup.$popups.append($p);
-                        $trigger.click(function(){
-                            console.log('trigger',this);
-                            Designer.Popup.toggle($p,$target);
+            $popups: $('#popups'),
+            register: function (name, $trigger, tmplUrl, $target) {
+                var $p = Designer.Popup.$popups.find('div.popup_container[name=' + name + ']');
+                if ($p.length == 0) {
+                    $p = $('<div/>').css({display: 'none'});
+                    $p.load(tmplUrl, function () {
+                        $(this).attr('_popup', 'false')
+                            .attr('name', name).addClass('popup_container');
+                        _angularCompile($(this), Designer.$scope).appendTo(Designer.Popup.$popups);
+                        $trigger.click(function () {
+                            Designer.Popup.toggle($p, $target);
                         });
                     });
                 }
             },
-            toggle:function($origin,$target){
-                if($origin.attr('_popup') == 'true'){
+            toggle: function ($origin, $target) {
+                $target.children().each(function (i, elem) {
+                    if (elem !== $origin.get(0)) {
+                        $(elem).hide(function () {
+                            $(this).attr('_popup', 'false')
+                                .detach().appendTo(Designer.Popup.$popups);
+                        });
+                    }
+                });
+                if ($origin.attr('_popup') == 'true') {
                     $origin.attr('_popup', 'false');
-                    $origin.hide(function(){
+                    $origin.hide(function () {
                         $origin.detach().appendTo(Designer.Popup.$popups);
                         $target.hide();
                     });
                 }
-                else{
+                else {
                     $origin.attr('_popup', 'true');
-                    $target.show(function(){
+                    $target.show(function () {
                         $origin.detach().appendTo($target);
                         $origin.show();
+                        Designer.$scope.$digest();
                     });
                 }
             }
         },
         Dock: {
             $container: $('#details').find('ul'),
-            $popup:$('#right_popup'),
+            $popup: $('#right_popup'),
             docks: [],
             init: function () {
                 this.register('element', 'fa fa-code', '/app/tmpls/element_detail.html');
                 this.register('properties', 'fa fa-list', '/app/tmpls/properties.html');
-                console.log('before render', Designer.Dock.docks);
                 this.render();
             },
             register: function (name, iconClass, tmplUrl) {
@@ -75,11 +105,11 @@ var Designer = (function ($) {
                 var $popup = Designer.Dock.$popup;
                 $popup.hide();
                 $e.empty();
-                $(docks).each(function ( i,elem) {
+                $(docks).each(function (i, elem) {
                     var $li = $('<li/>').append($('<a/>').append($('<i/>').addClass(elem.icon))
-                        .attr('name', elem.name))
+                        .attr('name', elem.name));
                     $e.append($li);
-                    Designer.Popup.register(elem.name,$li,elem.tmpl,$popup);
+                    Designer.Popup.register(elem.name, $li, elem.tmpl, $popup);
                 });
             }
         },
@@ -96,10 +126,12 @@ var Designer = (function ($) {
 
         },
 
-        init: function () {
-            var layout = $("#" + Designer.config.layoutId);
-            var container = layout.find("#" + Designer.config.containerId);
-            var canvas = layout.find("#" + Designer.config.canvasId);
+        init: function ($scope) {
+            Designer.$scope = $scope;
+
+            var layout = Designer.$layout = $("#" + Designer.config.layoutId);
+            var container = Designer.$container = layout.find("#" + Designer.config.containerId);
+            var canvas = Designer.$canvas= layout.find("#" + Designer.config.canvasId);
             container.css({
                 width: Designer.config.canvasWidth,
                 height: Designer.config.canvasHeight,
@@ -116,10 +148,6 @@ var Designer = (function ($) {
             ctx.strokeStyle = '#FFF';
             ctx.strokeRect(1, 1, 998, 998);
 
-
-            console.log(layout.get(0).scrollLeft);
-            console.log(layout.get(0).scrollTop);
-
             Designer.resize();
             Designer.centralize();
 
@@ -130,6 +158,10 @@ var Designer = (function ($) {
                 Designer.resize();
                 e.preventDefault();
             });
+            $(window).on('mousemove', function (e) {
+                Designer.Mouse.updateMouse(e);
+            });
+            return this;
         },
         centralize: function () {
             var layout = $("#" + Designer.config.layoutId);
@@ -140,10 +172,7 @@ var Designer = (function ($) {
             var layout = $("#" + Designer.config.layoutId);
             var jqH = $(window).height();
             var wih = window.innerHeight;
-            console.log('h', jqH, wih);
             var h = $(window).height() - 35 - 18;
-            console.log(h);
-            console.log(layout.get(0));
             layout.css({
                 height: h + "px"
             });

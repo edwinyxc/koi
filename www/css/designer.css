@@ -127,6 +127,7 @@ section .elements ul li a:hover{
 }
 .dock {
     background: none repeat scroll 0 0 #f5f5f5;
+    color:#999;
     border-bottom-left-radius: 3px;
     border-color: #aaa;
     border-style: solid;
@@ -199,7 +200,7 @@ section .right-dock ul li a{
 .add{
     display: inline-block;
     cursor: pointer;
-    padding: 0 .3em;
+    padding: 0 .3em
     background: #5cb85c;
     color: white;
     margin-left: 10px;
@@ -219,7 +220,6 @@ section .right-dock ul li a{
 }
 
 #details {
-    font-size: 1.2em;
     right:17px;
     color:#555;
 }

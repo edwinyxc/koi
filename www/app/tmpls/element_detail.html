@@ -1,15 +1,15 @@
 <div id="element_detail">
-    <form>
-        <input type="hidden" name="type" value="a">
-        <h4></h4>
-        <p><label for="x">x</label><input id="x" class="short" name="x" type="text">
-            <label for="y">y</label><input id="y" class="short" type="text" name="y"></p>
+    <h4>{{typeForDisplay()}}</h4>
 
-        <p><label for="name">name</label><input type="text" id="name" name="name"></p>
+    <p><label for="x">x</label><input ng-model="current.x" id="x" class="short" name="x" type="text">
+        <label for="y">y</label><input ng-model="current.y" id="y" class="short" type="text" name="y"></p>
 
+    <p><label for="name">name</label><input ng-model="current.name" type="text" id="name" name="name"></p>
+
+    <div ng-show="currentIsActivity()">
         <div>
             <p><label for="act_method">method</label>
-                <select id="act_method" name="act_method">
+                <select ng-model="current.act_method" id="act_method" name="act_method">
                     <option value="get">GET</option>
                     <option value="post">POST</option>
                     <option value="put">PUT</option>
@@ -19,16 +19,26 @@
 
         <div>
             <p><label for="act_url">url</label></p>
-            <p><textarea rows="5" cols="20" id="act_url" name="act_url"></textarea></p>
+
+            <p><textarea ng-model="current.act_url" rows="5" cols="20" id="act_url" name="act_url"></textarea></p>
         </div>
 
         <div>
             <p><label>parameters</label></p>
 
-            <p class="kv_adder">
-                <input class="short" placeholder="key">:
-                <input class="short" placeholder="value"><button class="add"><i class="fa fa-plus"></i>Add</button>
+            <form><input class="short" ng-model="param.key">:<input class="short"
+                                                                    ng-model="param.val">
+                <input type="submit" ng-click="param()" value="+"></form>
             </p>
+            <p ng-repeat="(k,v) in current.act_params">{{k}}:{{v}}</p>
         </div>
-    </form>
+    </div>
+
+    <div ng-show="currentIsSynchronizer()">
+        <p><label>syn_strategy</label></p>
+        <select ng-model="current.syn_strategy">
+            <option value="all">all</option>
+            <option value="any">any</option>
+        </select>
+    </div>
 </div>

@@ -1,9 +1,8 @@
 <div id="properties">
-    <p class="kv_adder">
-        <input class="short" placeholder="key">:
-        <input class="short" placeholder="value"><button class="add"><i class="fa fa-plus"></i>Add</button>
-    </p>
-    <div class="kv">
-
-    </div>
+    <h4>Properties</h4>
+    <form>
+        <p> <label>Set</label> <input class="short" ng-model="prop.key">:<input class="short" ng-model="prop.val">
+            <input type="submit" ng-click="prop()" value="+"> </p>
+    </form>
+    <p ng-repeat="(k,v) in editor.props"><label>{{k}}:</label>{{v}}</p>
 </div>

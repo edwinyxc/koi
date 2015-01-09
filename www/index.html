@@ -6,7 +6,10 @@
     <link rel="stylesheet" type="text/css" href="/css/designer.css">
     <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">
 </head>
-<body ng-controller="main">
+
+<body>
+<div id="popups">
+</div>
 <header>
     <div class="nav">
         <ul>
@@ -49,15 +52,18 @@
     </div>
 </section>
 <footer>
-    <p>Powered By shuimin co., ltd.</p>
+    <p>
+        <span>({{Designer.Mouse.clientX}},{{Designer.Mouse.clientY}})</span>
+        <span>({{Designer.Mouse.canvasX}},{{Designer.Mouse.canvasY}})</span>
+        <span>Powered By shuimin co., ltd.</span></p>
 </footer>
-<div id="popups">
-</div>
 <script src="/lib/jquery.min.js"></script>
+<script src="/lib/jquery-ui-1.10.4.js"></script>
 <script src="/lib/angular.js"></script>
 
 <script src="/app/designer.js"></script>
 <script src="/app/koi.js"></script>
 <script src="/app/main.js"></script>
+
 </body>
 </html>
