@@ -16,8 +16,8 @@ var Designer = (function ($) {
             selectorColor: "#833",
             scale: 1
         },
-        $layout:null,
-        $container:null,
+        $layout: null,
+        $container: null,
         $scope: null,
         $canvas: null,
         Mouse: {
@@ -125,13 +125,28 @@ var Designer = (function ($) {
             }
 
         },
+        Canvas: {
+            move: function () {
 
+            }
+        },
+        initLayout: function () {
+            $(window).bind("resize.designer", function () {
+                var a = $(window).height() - $('header').outerHeight() - $('footer').outerHeight();
+
+                Designer.$layout.height(a);
+                //if ($("#demo_signup").length) {
+                //    $("#designer_layout").height(a - $("#demo_signup").outerHeight())
+                //}
+            });
+            $(window).trigger("resize.designer")
+        },
         init: function ($scope) {
             Designer.$scope = $scope;
 
             var layout = Designer.$layout = $("#" + Designer.config.layoutId);
             var container = Designer.$container = layout.find("#" + Designer.config.containerId);
-            var canvas = Designer.$canvas= layout.find("#" + Designer.config.canvasId);
+            var canvas = Designer.$canvas = layout.find("#" + Designer.config.canvasId);
             container.css({
                 width: Designer.config.canvasWidth,
                 height: Designer.config.canvasHeight,
@@ -148,7 +163,8 @@ var Designer = (function ($) {
             ctx.strokeStyle = '#FFF';
             ctx.strokeRect(1, 1, 998, 998);
 
-            Designer.resize();
+            Designer.initLayout();
+            Designer.initCanvas();
             Designer.centralize();
 
             Designer.Dock.init();
