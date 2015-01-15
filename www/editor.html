@@ -170,6 +170,10 @@
         var $editor = $('#editor_canvas');
         var editor = $scope.editor = new ProcessFlowEditor($editor);
 
+//        var obj = $scope.obj = get();
+//
+//        $scope.obj_prop = obj.prop = {key: "a", value :"v"};
+
         function onSingleSelect(p) {
             $.each($scope.editor.points, function (i, elem) {
                 elem.fillStyle = '#444';

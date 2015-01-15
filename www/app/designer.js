@@ -125,12 +125,15 @@ var Designer = (function ($) {
             }
 
         },
+
         Canvas: {
             move: function () {
 
             }
         },
+
         initLayout: function () {
+
             $(window).bind("resize.designer", function () {
                 var a = $(window).height() - $('header').outerHeight() - $('footer').outerHeight();
 
@@ -139,7 +142,55 @@ var Designer = (function ($) {
                 //    $("#designer_layout").height(a - $("#demo_signup").outerHeight())
                 //}
             });
-            $(window).trigger("resize.designer")
+            $(window).trigger("resize.designer");
+
+        },
+        initHotKey: function () {
+            var $layout = Designer.$layout;
+
+            //alt+drag = move canvas
+            $layout.bind('keydown.alt', function (e) {
+                e.preventDefault();
+                if (e.altKey == true) {
+                    console.log('altkey pressed');
+                    $(this).unbind('mousedown').bind('mousedown', onDragStart);
+                    $(this).unbind('keyup.alt').bind('keyup.alt', function (e) {
+                        onDragEnd();
+                        e.preventDefault();
+                    });
+                }
+            });
+
+            function onDragStart(e) {
+                Designer.Mouse.updateMouse(e);
+
+                e.data = {x: Designer.Mouse.canvasX, y: Designer.Mouse.canvasY};
+
+                $layout.bind("mouseup", e.data, onDragEnd);
+                $layout.bind("mousemove", e.data, onDragging);
+            }
+
+            function onDragEnd() {
+                $layout.unbind("mousemove", onDragging);
+                $layout.unbind("mouseup", onDragEnd);
+            }
+
+            function onDragging(e) {
+                Designer.Mouse.updateMouse(e);
+
+                var delta = {
+                    x: Designer.Mouse.canvasX - e.data.x,
+                    y: Designer.Mouse.canvasY - e.data.y
+                };
+                e.data.x = Designer.Mouse.canvasX;
+                e.data.y = Designer.Mouse.canvasY;
+                console.log(delta);
+                var elem = $layout.get(0);
+                elem.scrollLeft = elem.scrollLeft - delta.x;
+                elem.scrollTop = elem.scrollTop - delta.y;
+            }
+
+
         },
         init: function ($scope) {
             Designer.$scope = $scope;
@@ -164,16 +215,12 @@ var Designer = (function ($) {
             ctx.strokeRect(1, 1, 998, 998);
 
             Designer.initLayout();
-            Designer.initCanvas();
+            Designer.initHotKey();
+            //Designer.initCanvas();
             Designer.centralize();
 
             Designer.Dock.init();
 
-            //window events
-            $(window).resize(function (e) {
-                Designer.resize();
-                e.preventDefault();
-            });
             $(window).on('mousemove', function (e) {
                 Designer.Mouse.updateMouse(e);
             });
@@ -183,15 +230,6 @@ var Designer = (function ($) {
             var layout = $("#" + Designer.config.layoutId);
             layout.get(0).scrollLeft = Designer.config.pageMargin - 10;
             layout.get(0).scrollTop = Designer.config.pageMargin - 10;
-        },
-        resize: function () {
-            var layout = $("#" + Designer.config.layoutId);
-            var jqH = $(window).height();
-            var wih = window.innerHeight;
-            var h = $(window).height() - 35 - 18;
-            layout.css({
-                height: h + "px"
-            });
         },
         open: function (process) {
 
